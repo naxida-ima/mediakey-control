@@ -69,20 +69,8 @@ class ControlBarService : Service() {
                 setShowing(false)
             }
 
-            override fun onPlayPause() {
-                MediaToggler.toggle(this@ControlBarService)
-                setShowing(!showingPlaying)
-            }
-
             override fun onSkipToNext() {
                 MediaToggler.next(this@ControlBarService)
-            }
-
-            override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
-                // 媒体按键（线控/蓝牙/部分系统控制）路由到这里，直接按播放/暂停处理
-                MediaToggler.toggle(this@ControlBarService)
-                setShowing(!showingPlaying)
-                return true
             }
         })
         session.isActive = true

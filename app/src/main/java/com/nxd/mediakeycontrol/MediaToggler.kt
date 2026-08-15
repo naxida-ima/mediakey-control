@@ -8,6 +8,8 @@ import android.media.session.PlaybackState
  * 跨应用媒体控制核心：
  * 通过 MediaSessionManager 拿到所有活跃媒体会话（Android 8.0+ 允许），
  * 向真实播放器（网易云/QQ音乐/听书App等）发送 play/pause 指令。
+ * 注意：getActiveSessions() 返回的是 MediaController 列表，直接用其
+ * playbackState / transportControls 属性即可，没有 controller 属性。
  */
 object MediaToggler {
 
@@ -30,9 +32,9 @@ object MediaToggler {
     /** 播放：找暂停中的会话发 play */
     fun play(context: Context): Boolean {
         for (s in activeSessions(context)) {
-            val st = s.controller.playbackState?.state
+            val st = s.playbackState?.state
             if (st == null || st in PAUSED_STATES) {
-                s.controller.transportControls.play()
+                s.transportControls.play()
                 return true
             }
         }
@@ -42,9 +44,9 @@ object MediaToggler {
     /** 暂停：找播放中的会话发 pause */
     fun pause(context: Context): Boolean {
         for (s in activeSessions(context)) {
-            val st = s.controller.playbackState?.state
+            val st = s.playbackState?.state
             if (st != null && st in PLAYING_STATES) {
-                s.controller.transportControls.pause()
+                s.transportControls.pause()
                 return true
             }
         }
@@ -60,9 +62,9 @@ object MediaToggler {
     /** 下一首 */
     fun next(context: Context): Boolean {
         for (s in activeSessions(context)) {
-            val st = s.controller.playbackState?.state
+            val st = s.playbackState?.state
             if (st != null && (st in PLAYING_STATES || st in PAUSED_STATES)) {
-                s.controller.transportControls.skipToNext()
+                s.transportControls.skipToNext()
                 return true
             }
         }
@@ -72,7 +74,7 @@ object MediaToggler {
     /** 是否有正在播放的媒体（供 UI 显示） */
     fun isAnyPlaying(context: Context): Boolean {
         for (s in activeSessions(context)) {
-            val st = s.controller.playbackState?.state
+            val st = s.playbackState?.state
             if (st != null && st in PLAYING_STATES) return true
         }
         return false

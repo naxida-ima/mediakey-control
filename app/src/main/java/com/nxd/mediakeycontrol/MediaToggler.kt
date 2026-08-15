@@ -82,8 +82,16 @@ object MediaToggler {
 
     private fun activeSessions(context: Context): List<android.media.session.MediaController> {
         val msm = context.getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
-        val sessions = msm.getActiveSessions(null)
-        val own = ControlBarService.sessionToken
-        return sessions.filter { it.sessionToken != own }
+        // Android 13+ 必须传入已启用的 NotificationListenerService 的 ComponentName，
+        // 否则 getActiveSessions(null) 抛 SecurityException: Missing permission to control media
+        val cn = ComponentName(context, MediaNotificationListener::class.java)
+        return try {
+            val sessions = msm.getActiveSessions(cn)
+            val own = ControlBarService.sessionToken
+            sessions.filter { it.sessionToken != own }
+        } catch (e: SecurityException) {
+            Log.w("MediaToggler", "通知监听未启用，无法获取媒体会话", e)
+            emptyList()
+        }
     }
 }

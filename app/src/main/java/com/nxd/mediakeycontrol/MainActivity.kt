@@ -31,6 +31,9 @@ class MainActivity : android.app.Activity() {
         findViewById<Button>(R.id.btnAccessibility).setOnClickListener {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
+        findViewById<Button>(R.id.btnNotifListener).setOnClickListener {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
         findViewById<Button>(R.id.btnRefresh).setOnClickListener { refreshAll() }
 
         swVolumeKey.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
@@ -84,12 +87,20 @@ class MainActivity : android.app.Activity() {
             }
         }
 
+        // 通知监听状态（Android 13 获取媒体会话必须）
+        val nlOn = isNotificationListenerOn()
+
         // 状态文本
         val sb = StringBuilder()
+        sb.append("● 通知监听权限：").append(if (nlOn) "已启用" else "⚠ 未启用（必须开启）").append("\n")
         sb.append("● 音量下键劫持：").append(if (accOn) "已启用" else "未启用").append("\n")
         sb.append("● 控制栏媒体卡接管：").append(if (svcOn) "已启用" else "未启用").append("\n")
         sb.append("● 当前媒体：")
-        sb.append(if (MediaToggler.isAnyPlaying(this)) "有媒体正在播放" else "无媒体在播放")
+        try {
+            sb.append(if (MediaToggler.isAnyPlaying(this)) "有媒体正在播放" else "无媒体在播放")
+        } catch (e: Exception) {
+            sb.append("无法获取（请先开启通知监听）")
+        }
         tvStatus.text = sb.toString()
     }
 
@@ -98,6 +109,13 @@ class MainActivity : android.app.Activity() {
         val enabled = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
         val cn = ComponentName(this, VolumeKeyService::class.java)
         return enabled.any { it.resolveInfo.serviceInfo.packageName == cn.packageName && it.resolveInfo.serviceInfo.name == cn.className }
+    }
+
+    /** 检查通知监听器是否已启用 */
+    private fun isNotificationListenerOn(): Boolean {
+        val cn = ComponentName(this, MediaNotificationListener::class.java)
+        val enabled = android.provider.Settings.Secure.getString(contentResolver, "enabled_notification_listeners") ?: ""
+        return enabled.contains(cn.flattenToString())
     }
 
     private fun requestNotifPermissionIfNeeded() {

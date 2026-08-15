@@ -6,9 +6,11 @@
     <string name="hint_volume_key">开启后需在系统无障碍设置中启用本应用服务；音量条不再弹出，按音量下键 = 媒体播放/暂停切换。</string>
     <string name="switch_control_bar">劫持控制栏媒体播放/暂停</string>
     <string name="hint_control_bar">开启后生成常驻媒体通知（锁屏/通知栏媒体卡），卡片上的播放/暂停按钮由本应用接管并转发给当前媒体。</string>
+    <string name="btn_notif_listener">打开通知监听设置（必须开启）</string>
     <string name="btn_accessibility">打开系统无障碍设置</string>
     <string name="btn_refresh">刷新状态</string>
-    <string name="tip_footer">提示：ColorOS 下建议在「应用管理 → 自启动」允许本应用，并把电池优化设为「不限制」，防止后台服务被清理。若无障碍服务被系统自动关闭，重新到无障碍设置里打开即可。</string>
+    <string name="tip_footer">提示：① 必须开启通知监听权限（本应用才能获取媒体会话控制权）；② ColorOS 下建议在「应用管理 → 自启动」允许本应用，并把电池优化设为「不限制」，防止后台服务被清理。若无障碍服务被系统自动关闭，重新到无障碍设置里打开即可。</string>
     <string name="accessibility_service_label">媒体按键控制服务</string>
     <string name="accessibility_service_description">监听音量下键：按下音量下键时切换当前媒体的播放/暂停，并拦截系统音量条。需要此权限以读取按键事件。</string>
+    <string name="notification_listener_label">媒体按键控制（通知监听）</string>
 </resources>

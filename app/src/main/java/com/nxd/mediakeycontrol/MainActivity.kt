@@ -15,9 +15,8 @@ import android.widget.CompoundButton
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : android.app.Activity() {
 
     private lateinit var swVolumeKey: Switch
     private lateinit var swControlBar: Switch
